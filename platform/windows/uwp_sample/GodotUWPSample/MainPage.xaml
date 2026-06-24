@@ -2,7 +2,6 @@
     x:Class="Godot.Uwp.Embedding.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:Godot.Uwp.Embedding"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -10,9 +9,16 @@
     mc:Ignorable="d">
 
     <Grid>
-        <!-- Godot renders into this panel via an in-process composition
-             swap chain (ISwapChainPanelNative::SetSwapChain). -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="280" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Godot renders into this panel via an in-process composition swap
+             chain (ISwapChainPanelNative::SetSwapChain). A SwapChainPanel must
+             NOT carry a Background in UWP (XamlParseException). -->
         <SwapChainPanel x:Name="GodotPanel"
+                        Grid.Column="0"
                         Loaded="OnPanelLoaded"
                         SizeChanged="OnPanelSizeChanged"
                         CompositionScaleChanged="OnPanelCompositionScaleChanged"
@@ -23,11 +29,51 @@
 
         <!-- Status overlay (hidden once the engine renders) -->
         <TextBlock x:Name="StatusText"
+                   Grid.Column="0"
                    Text="Starting Godot engine..."
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    FontSize="16"
                    Foreground="#8888AA"
                    IsHitTestVisible="False" />
+
+        <!-- Control panel: one button per cube + a color-change message box.
+             Both are driven entirely by the host<->engine JSON bus. -->
+        <Grid Grid.Column="1" Background="#161622" Padding="12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Text="Cubes"
+                       FontSize="18"
+                       FontWeight="SemiBold"
+                       Foreground="#E6E6F0"
+                       Margin="0,0,0,8" />
+
+            <!-- Filled at runtime from the engine's "cubes_ready" message. -->
+            <StackPanel Grid.Row="1" x:Name="ButtonHost" Margin="0,0,0,16" />
+
+            <TextBlock Grid.Row="2"
+                       Text="Color changes (from Godot)"
+                       FontSize="14"
+                       FontWeight="SemiBold"
+                       Foreground="#E6E6F0"
+                       Margin="0,0,0,6" />
+
+            <Border Grid.Row="3"
+                    Background="#0E0E18"
+                    CornerRadius="4"
+                    Padding="8">
+                <ScrollViewer x:Name="MessageScroll"
+                              VerticalScrollBarVisibility="Auto"
+                              VerticalScrollMode="Auto">
+                    <StackPanel x:Name="MessageLog" />
+                </ScrollViewer>
+            </Border>
+        </Grid>
     </Grid>
 </Page>

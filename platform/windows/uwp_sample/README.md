@@ -4,9 +4,18 @@ A minimal, working UWP (AppContainer) application that hosts the Godot engine
 **in-process** and renders into a XAML `SwapChainPanel`, using the embedding added
 to this engine fork (see [`../../../UWP_EMBEDDING.md`](../../../UWP_EMBEDDING.md)).
 
-The bundled Godot project is a spinning-cube smoke test (`GodotUWPSample/GodotProject/`):
-it proves rendering, DPI-correct sizing, live resize, and host→engine input
-injection (click the cube to recolor it).
+## Demo
+
+[**demo.mp4**](demo.mp4) — multiple spinning cubes on a dark plane with one UWP
+button per cube. Clicking a button recolors that cube (the color is chosen in
+Godot), makes it hop so it is obvious which one changed, and the new color is
+pushed back over the host↔engine bus into the message box. Left-drag orbits the
+camera.
+
+The bundled Godot project (`GodotUWPSample/GodotProject/`) renders multiple
+spinning cubes on a dark plane and exercises the two-way host↔engine message
+bus. It proves rendering, DPI-correct sizing, live resize, host→engine input
+injection, and host↔engine messaging.
 
 ```
 uwp_sample/
@@ -15,7 +24,7 @@ uwp_sample/
 │   ├── Godot/                   GodotNative (P/Invoke), GodotEngineHost (engine thread),
 │   │                            EngineMessageReceiver / EngineMessageSender (the bus)
 │   ├── MainPage.xaml(.cs)       SwapChainPanel + input/resize/DPI/lifecycle wiring
-│   └── GodotProject/            the bundled Godot project (cube test)
+│   └── GodotProject/            the bundled Godot project (multi-cube + bus sample)
 ├── GodotUWPSample.Package/      Windows Application Packaging project (VS F5 deploy)
 ├── INTEGRATION_GUIDE.md         step-by-step recipe (engine + project + app)
 └── EMBEDDING_ARCHITECTURE.md    architecture, package & sequence diagrams, bus protocol
